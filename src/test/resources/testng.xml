@@ -1,0 +1,34 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="API Automation Suite" parallel="false">
+    <listeners>
+        <listener class-name="com.microservices.api.core.SuiteInitListener"/>
+    </listeners>
+    <test name="API gateway resilience tests">
+        <classes>
+           <!-- <class name="com.microservices.api.base.SanityTest"/>
+            <class name="com.microservices.api.base.GoogleTest"/>
+            <class name="com.microservices.api.gateway.RoutingTests.RoutingTests"/>
+            <class name="com.microservices.api.functional.CreateProductTest"/>
+            <class name="com.microservices.api.gateway.RateLimiterTests.RateLimitValidationTests"/>
+            <class name="com.microservices.api.functional.CreateProductTest"/>
+            <class name="com.microservices.api.gateway.RoutingTests.WireMockRoutingTests"/>
+            <class name="com.microservices.api.gateway.resiliency.CircuitBreakerTests"/>
+            <class name="com.microservices.api.gateway.resiliency.BulkheadTests"/>
+            <class name="com.microservices.api.gateway.resiliency.RetryTests"/>
+            <class name="com.microservices.api.tests.gateway.FallBackTests.FallbackTests"/>
+            <class name="com.microservices.api.tests.gateway.FallBackTests.FallbackTests"/>-->
+        </classes>
+    </test>
+    <test name="API Gateway AUth tests">
+        <classes>
+           <!-- <class name="com.microservices.api.tests.gateway.AuthTests.JwtValidationTests"/>-->
+        </classes>
+
+    </test>
+    <test name="API Gateway functional tests">
+        <classes>
+            <class name="com.microservices.api.tests.functional.product.CreateProductTest"/>
+        </classes>
+
+    </test>
+</suite>

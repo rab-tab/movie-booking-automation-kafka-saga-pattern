@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="API Automation Suite" parallel="false">
+    <listeners>
+        <listener class-name="com.microservices.api.core.SuiteInitListener"/>
+    </listeners>
+    <parameter name="gateway.base.url" value="http://localhost:8088"/>
+    <test name="API Gateway resilience tests">
+        <classes>
+           <!-- <class name="com.microservices.api.tests.gateway.FallBackTests.FallbackTests"/>
+            <class name="com.microservices.api.tests.gateway.resiliency.TimeoutTests"/>-->
+            <class name="com.microservices.api.tests.gateway.resiliency.CircuitBreakerTests"/>
+        </classes>
+
+    </test>
+</suite>

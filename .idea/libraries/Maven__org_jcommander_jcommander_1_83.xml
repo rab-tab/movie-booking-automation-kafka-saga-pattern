@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jcommander:jcommander:1.83">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jcommander/jcommander/1.83/jcommander-1.83.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jcommander/jcommander/1.83/jcommander-1.83-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jcommander/jcommander/1.83/jcommander-1.83-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

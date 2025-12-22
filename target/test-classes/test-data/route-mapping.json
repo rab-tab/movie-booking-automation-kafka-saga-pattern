@@ -1,0 +1,181 @@
+[
+  {
+    "id": "order_fetch_1",
+    "description": "Order fetch routed to Order Service (GET)",
+    "request": {
+      "method": "GET",
+      "path": "/orders/1001",
+      "headers": { "Authorization": "Bearer valid-token" }
+    },
+    "expected": {
+      "isValid": true,
+      "expectedDownstream": {
+        "serviceName": "Order Service",
+        "downstreamUrl": "http://order-service/orders/1001",
+        "downstreamPath": "/orders/1001",
+        "httpMethod": "GET"
+      },
+      "expectedBodyFields": ["orderId", "status", "amount"],
+      "expectedStatus": 200
+    }
+  },
+  {
+    "id": "order_fetch_invalid",
+    "description": "Invalid orderId returns 400",
+    "request": {
+      "method": "GET",
+      "path": "/orders/invalid",
+      "headers": { "Authorization": "Bearer valid-token" }
+    },
+    "expected": {
+      "isValid": false,
+      "expectedDownstream": null,
+      "expectedBodyFields": ["error", "message"],
+      "expectedStatus": 400
+    }
+  },
+  {
+    "id": "product_list_query",
+    "description": "Product list with query parameters routed to Product Service",
+    "request": {
+      "method": "GET",
+      "path": "/products",
+      "queryParams": { "category": "electronics", "limit": 5 }
+    },
+    "expected": {
+      "isValid": true,
+      "expectedDownstream": {
+        "serviceName": "Product Service",
+        "downstreamUrl": "http://product-service/products?category=electronics&limit=5",
+        "downstreamPath": "/products",
+        "httpMethod": "GET"
+      },
+      "expectedBodyFields": ["products", "totalCount"],
+      "expectedStatus": 200
+    }
+  },
+  {
+    "id": "payment_no_auth",
+    "description": "Payments endpoint missing Authorization header returns 401",
+    "request": {
+      "method": "GET",
+      "path": "/payments/1001"
+    },
+    "expected": {
+      "isValid": false,
+      "expectedDownstream": null,
+      "expectedBodyFields": ["error", "message"],
+      "expectedStatus": 401
+    }
+  },
+  {
+    "id": "payment_with_auth",
+    "description": "Payments endpoint with valid token routes to Payment Service",
+    "request": {
+      "method": "GET",
+      "path": "/payments/1001",
+      "headers": { "Authorization": "Bearer valid-token" }
+    },
+    "expected": {
+      "isValid": true,
+      "expectedDownstream": {
+        "serviceName": "Payment Service",
+        "downstreamUrl": "http://payment-service/payments/1001",
+        "downstreamPath": "/payments/1001",
+        "httpMethod": "GET"
+      },
+      "expectedBodyFields": ["paymentId", "status", "amount"],
+      "expectedStatus": 200
+    }
+  },
+  {
+    "id": "unknown_route",
+    "description": "Unknown route returns 404",
+    "request": {
+      "method": "GET",
+      "path": "/invalid/route"
+    },
+    "expected": {
+      "isValid": false,
+      "expectedDownstream": null,
+      "expectedBodyFields": ["error", "message"],
+      "expectedStatus": 404
+    }
+  },
+  {
+    "id": "order_create_post",
+    "description": "Create order with POST routed to Order Service",
+    "request": {
+      "method": "POST",
+      "path": "/orders",
+      "headers": { "Authorization": "Bearer valid-token" },
+      "body": { "orderName": "NewOrder", "amount": 500 }
+    },
+    "expected": {
+      "isValid": true,
+      "expectedDownstream": {
+        "serviceName": "Order Service",
+        "downstreamUrl": "http://order-service/orders",
+        "downstreamPath": "/orders",
+        "httpMethod": "POST"
+      },
+      "expectedBodyFields": ["orderId", "status"],
+      "expectedStatus": 201
+    }
+  },
+  {
+    "id": "product_update_put",
+    "description": "Update product quantity routed to Product Service via PUT",
+    "request": {
+      "method": "PUT",
+      "path": "/products/123",
+      "headers": { "Authorization": "Bearer valid-token" },
+      "body": { "quantity": 10 }
+    },
+    "expected": {
+      "isValid": true,
+      "expectedDownstream": {
+        "serviceName": "Product Service",
+        "downstreamUrl": "http://product-service/products/123",
+        "downstreamPath": "/products/123",
+        "httpMethod": "PUT"
+      },
+      "expectedBodyFields": ["productId", "quantity"],
+      "expectedStatus": 200
+    }
+  },
+  {
+    "id": "order_delete",
+    "description": "Delete order routed to Order Service",
+    "request": {
+      "method": "DELETE",
+      "path": "/orders/1002",
+      "headers": { "Authorization": "Bearer valid-token" }
+    },
+    "expected": {
+      "isValid": true,
+      "expectedDownstream": {
+        "serviceName": "Order Service",
+        "downstreamUrl": "http://order-service/orders/1002",
+        "downstreamPath": "/orders/1002",
+        "httpMethod": "DELETE"
+      },
+      "expectedBodyFields": [],
+      "expectedStatus": 204
+    }
+  },
+  {
+    "id": "product_list_no_auth",
+    "description": "Product list without token returns 401",
+    "request": {
+      "method": "GET",
+      "path": "/products"
+    },
+    "expected": {
+      "isValid": false,
+      "expectedDownstream": null,
+      "expectedBodyFields": ["error", "message"],
+      "expectedStatus": 401
+    }
+  }
+]

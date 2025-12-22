@@ -1,0 +1,27 @@
+[
+  {
+    "id": "product_create_1",
+    "description": "Create product routed to Product Service",
+    "request": {
+      "method": "POST",
+      "path": "/product",
+      "bodyFile": "create_product_data.json"
+    },
+    "expected": {
+      "isValid": true,
+      "expectedStatus": 201,
+      "expectedDownstream": {
+        "request":
+            {
+              "downStreamServiceName": "Product Service",
+              "downstreamUrl": "http://localhost:9090",
+              "downstreamPath": "/product",
+              "method": "POST",
+              "path": "/product",
+              "bodyFile": "create_product_data.json"
+            }
+      },
+      "expectedBodyFields": ["productId", "status"]
+    }
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "scenario": "Valid fetch order",
+    "endpoint": "/orders/{orderId}",
+    "method": "GET",
+    "pathParams": { "orderId": "1001" },
+    "queryParams": null,
+    "headers": { "Authorization": "Bearer valid-token" },
+    "expectedStatus": 200
+  },
+  {
+    "scenario": "Invalid orderId",
+    "endpoint": "/orders/{orderId}",
+    "method": "GET",
+    "pathParams": { "orderId": "invalid" },
+    "queryParams": null,
+    "headers": { "Authorization": "Bearer valid-token" },
+    "expectedStatus": 400
+  },
+  {
+    "scenario": "Product list with query params",
+    "endpoint": "/products",
+    "method": "GET",
+    "pathParams": null,
+    "queryParams": { "category": "electronics", "limit": 5 },
+    "headers": null,
+    "expectedStatus": 200
+  },
+  {
+    "scenario": "Missing auth header",
+    "endpoint": "/payments/{orderId}",
+    "method": "GET",
+    "pathParams": { "orderId": "1001" },
+    "queryParams": null,
+    "headers": null,
+    "expectedStatus": 401
+  },
+  {
+    "scenario": "Unknown route returns 404",
+    "endpoint": "/invalid/route",
+    "method": "GET",
+    "pathParams": null,
+    "queryParams": null,
+    "headers": null,
+    "expectedStatus": 404
+  }
+]

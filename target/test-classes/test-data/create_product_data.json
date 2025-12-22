@@ -1,0 +1,17 @@
+[
+  {
+    "name":"test",
+    "price":100,
+    "quantity":1000
+  },
+  {
+    "name":"Computer chair",
+    "price":10000,
+    "quantity":10
+  },
+  {
+    "name":"zincasin",
+    "price":800,
+    "quantity":1
+  }
+]

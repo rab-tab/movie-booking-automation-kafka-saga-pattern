@@ -1,0 +1,183 @@
+{
+  "mappings": [
+
+    {
+      "name": "product-healthy",
+      "request": {
+        "method": "GET",
+        "url": "/product/healthy/123"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "productId": "123",
+          "name": "Healthy Product",
+          "price": 150
+        },
+        "headers": { "Content-Type": "application/json" }
+      }
+    },
+
+    {
+      "name": "product-slow",
+      "request": {
+        "method": "GET",
+        "url": "/product/slow/123"
+      },
+      "response": {
+        "status": 200,
+        "fixedDelayMilliseconds": 10000,
+        "jsonBody": {
+          "message": "Downstream timeout"
+        }
+      }
+    },
+
+    {
+      "name": "product-timeout",
+      "request": {
+        "method": "GET",
+        "url": "/product/timeout/123"
+      },
+      "response": {
+        "status": 200,
+        "fixedDelayMilliseconds": 30000,
+        "jsonBody": {
+          "productId": "123",
+          "status": "timeout"
+        }
+      }
+    },
+
+    {
+      "name": "product-error-500",
+      "request": {
+        "method": "GET",
+        "url": "/product/error/123"
+      },
+      "response": {
+        "status": 500,
+        "jsonBody": {
+          "error": "Internal Server Error from downstream product service"
+        }
+      }
+    },
+
+    {
+      "name": "product-fallback",
+      "request": {
+        "method": "GET",
+        "url": "/product/fallback/123"
+      },
+      "response": {
+        "status": 503,
+        "jsonBody": {
+          "message": "Fallback response: product service unavailable"
+        }
+      }
+    },
+
+    {
+      "name": "cb-error1",
+      "request": {
+        "method": "GET",
+        "url": "/product/cb/error1"
+      },
+      "response": {
+        "status": 500,
+        "jsonBody": { "step": "cb-error1" }
+      }
+    },
+
+    {
+      "name": "cb-error2",
+      "request": {
+        "method": "GET",
+        "url": "/product/cb/error2"
+      },
+      "response": {
+        "status": 500,
+        "jsonBody": { "step": "cb-error2" }
+      }
+    },
+
+    {
+      "name": "cb-open",
+      "request": {
+        "method": "GET",
+        "url": "/product/cb/open"
+      },
+      "response": {
+        "status": 503,
+        "jsonBody": {
+          "message": "Circuit breaker open: rejecting temporarily"
+        }
+      }
+    },
+
+    {
+      "name": "retry-step1",
+      "request": {
+        "method": "GET",
+        "url": "/product/retry/step1"
+      },
+      "response": {
+        "status": 500,
+        "jsonBody": { "retry-step": 1 }
+      }
+    },
+
+    {
+      "name": "retry-step2",
+      "request": {
+        "method": "GET",
+        "url": "/product/retry/step2"
+      },
+      "response": {
+        "status": 500,
+        "jsonBody": { "retry-step": 2 }
+      }
+    },
+
+    {
+      "name": "retry-success",
+      "request": {
+        "method": "GET",
+        "url": "/product/retry/success"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": { "message": "Retry succeeded" }
+      }
+    },
+
+    {
+      "name": "rate-limit-exceeded",
+      "request": {
+        "method": "GET",
+        "url": "/product/rate-limit/123"
+      },
+      "response": {
+        "status": 429,
+        "jsonBody": {
+          "message": "Rate limit exceeded"
+        }
+      }
+    },
+
+    {
+      "name": "bulkhead-rejected",
+      "request": {
+        "method": "GET",
+        "url": "/product/bulkhead/123"
+      },
+      "response": {
+        "status": 503,
+        "jsonBody": {
+          "message": "Bulkhead full - rejecting request"
+        }
+      }
+    }
+
+  ]
+}

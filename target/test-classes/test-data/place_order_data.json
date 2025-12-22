@@ -1,0 +1,14 @@
+[
+{
+  "productId":1,
+  "totalAmount":1200,
+  "quantity":10,
+  "paymentMode":"CASH"
+},
+  {
+    "productId":2,
+    "totalAmount":1200,
+    "quantity":1,
+    "paymentMode":"CASH"
+  }
+]
