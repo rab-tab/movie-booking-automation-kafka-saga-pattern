@@ -1,10 +1,10 @@
-package tests.failures;
+package com.microservices.api.tests.failures;
 
 import com.microservices.api.model.events.BookingPaymentEvent;
 import com.microservices.api.model.events.SeatReservedEvent;
 import com.microservices.api.model.request.BookingRequest;
 import com.microservices.api.model.response.BookingResponse;
-import tests.BaseKafkaIntegrationTest;
+import com.microservices.api.tests.BaseKafkaIntegrationTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;

@@ -1,4 +1,4 @@
-package tests;
+package com.microservices.api.tests;
 
 
 import org.apache.kafka.clients.consumer.Consumer;
