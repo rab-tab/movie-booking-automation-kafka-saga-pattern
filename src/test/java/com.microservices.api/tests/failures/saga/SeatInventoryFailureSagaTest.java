@@ -1,4 +1,4 @@
-package com.microservices.api.tests.failures;
+package com.microservices.api.tests.failures.saga;
 
 import com.microservices.api.model.events.SeatReservedEvent;
 import com.microservices.api.model.request.BookingRequest;

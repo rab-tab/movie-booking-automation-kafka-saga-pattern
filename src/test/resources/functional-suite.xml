@@ -1,14 +1,14 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="API Automation Suite" parallel="false">
     <listeners>
-        <listener class-name="com.microservices.api.core.SuiteInitListener"/>
+        <!--<listener class-name="com.microservices.api.core.SuiteInitListener"/>-->
     </listeners>
     <parameter name="gateway.base.url" value="http://localhost:8080"/>
     <test name="API Gateway functional tests">
         <classes>
             <!-- <class name="com.microservices.api.tests.functional.product.CreateProductTest"/>
              <class name="com.microservices.api.tests.gateway.AuthTests.JwtValidationTests"/>-->
-            <class name="com.microservices.api.tests.functional.order.PlaceOrderPositiveTest"/>
+            <class name="com.microservices.api.tests.failures.idempotency.SeatInventoryIdempotencyTest"/>
             <!--<class name="com.microservices.api.tests.functional.order.PlaceOrderFailureTest"/>-->
         </classes>
     </test>

@@ -3,6 +3,7 @@ package com.microservices.api.util;
 import java.sql.*;
 import java.util.*;
 
+import static com.microservices.api.util.DbTestUtils.getConnection;
 import static org.testng.AssertJUnit.assertEquals;
 
 public class DBHelper {
@@ -11,7 +12,7 @@ public class DBHelper {
         System.out.println("In Db helper, bookingCode --- "+ bookingCode);
         String sql = "SELECT * FROM Booking WHERE bookingCode = ?";
 
-        try (Connection con = DbTestUtils.getConnection();
+        try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, bookingCode);
@@ -36,7 +37,7 @@ public class DBHelper {
 
         String sql = "SELECT seatIds FROM Booking_seatIds WHERE Booking_id = ?";
 
-        try (Connection con = DbTestUtils.getConnection();
+        try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setLong(1, bookingId);
@@ -55,7 +56,7 @@ public class DBHelper {
                 "SELECT status, currentBookingId FROM seat_inventory " +
                         "WHERE showId = ? AND seatNumber = ?";
 
-        try (Connection con = DbTestUtils.getConnection();
+        try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, showId);
@@ -95,7 +96,7 @@ public class DBHelper {
 
         Map<String, Map<String, String>> result = new HashMap<>();
 
-        try (Connection conn = DbTestUtils.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, showId);
@@ -145,7 +146,7 @@ public class DBHelper {
             Object... params
     ) throws SQLException {
 
-        try (Connection conn = DbTestUtils.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             for (int i = 0; i < params.length; i++) {
@@ -178,5 +179,49 @@ public class DBHelper {
         }
     }
 
+    public static String getBookingStatus(String reservationId) throws SQLException {
+        String status = null;
+        String query = "SELECT status FROM Booking WHERE bookingCode = ?";
 
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, reservationId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    status = rs.getString("status");
+                }
+            }
+        }
+        return status;
+    }
+    /**
+     * Assert payment/booking status for a booking
+     *
+     * @param bookingCode    Booking code (used as reservationId in your tests)
+     * @param expectedStatus Expected status: "CONFIRMED", "FAILED", or null if not found
+     */
+    public static void assertPaymentStatus(String bookingCode, String expectedStatus) {
+        String status = null;
+        String query = "SELECT status FROM Booking WHERE bookingCode = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, bookingCode);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    status = rs.getString("status");
+                }
+            }
+
+            assertEquals(status, expectedStatus, "Payment status mismatch for bookingCode: " + bookingCode);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to assert payment status for bookingCode: " + bookingCode, e);
+        }
+    }
 }
+

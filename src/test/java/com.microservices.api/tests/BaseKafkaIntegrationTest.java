@@ -1,6 +1,7 @@
 package com.microservices.api.tests;
 
 
+import com.microservices.api.util.DBHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -11,6 +12,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
@@ -97,7 +99,7 @@ public abstract class BaseKafkaIntegrationTest {
         throw new RuntimeException("No records found in topic: " + topic);
     }
 
-    protected <T> T pollForBookingEvent(Consumer<String, T> consumer, String topic, Duration timeout, String expectedBookingId, Function<T, String> bookingIdExtractor) {
+    public static <T> T pollForBookingEvent(Consumer<String, T> consumer, String topic, Duration timeout, String expectedBookingId, Function<T, String> bookingIdExtractor) {
         long end = System.currentTimeMillis() + timeout.toMillis();
 
         while (System.currentTimeMillis() < end) {
@@ -114,5 +116,8 @@ public abstract class BaseKafkaIntegrationTest {
         );
     }
 
+    public static String getBookingStatus(String bookingId) throws SQLException {
+        return DBHelper.getBookingStatus(bookingId);
+    }
 
 }
