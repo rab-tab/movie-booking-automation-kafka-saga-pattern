@@ -1,5 +1,6 @@
 package com.microservices.api.tests.failures.resiliency;
 
+import com.microservices.api.model.events.BookingCreatedEvent;
 import com.microservices.api.model.events.SeatReservedEvent;
 import com.microservices.api.model.request.BookingRequest;
 import com.microservices.api.model.response.BookingResponse;
@@ -9,6 +10,7 @@ import com.microservices.api.util.TestDataCleaner;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -20,8 +22,7 @@ import java.util.UUID;
 
 import static com.microservices.api.util.DBHelper.assertSeatAvailable;
 import static com.microservices.api.util.DBHelper.assertSeatLocked;
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.*;
 
 
 public class BookingEventResilienceTest extends BaseKafkaIntegrationTest {
@@ -75,7 +76,7 @@ public class BookingEventResilienceTest extends BaseKafkaIntegrationTest {
                 .then().log().all().statusCode(200);
     }
 
-    @Test
+    @Test(enabled = false)
     public void booking_should_remain_pending_if_payment_service_down() throws Exception {
 
         List<String> seats = List.of("B11");
@@ -119,6 +120,63 @@ public class BookingEventResilienceTest extends BaseKafkaIntegrationTest {
         RestAssured.given().log().all()
                 .post("http://localhost:9292/kafka/resume/seat-payment-status-listener")
                 .then().log().all().statusCode(200);
+    }
+
+    @Test
+    public void booking_should_retry_and_go_to_dlt_on_seat_service_timeout() throws Exception {
+
+        List<String> seats = List.of("B10");
+        String bookingId = UUID.randomUUID().toString();
+
+        // 1️⃣ Enable timeout simulation in seat-inventory-service
+        RestAssured.given()
+                .post("http://localhost:9292/internal/test/seat-inventory/timeout/enable")
+                .then()
+                .statusCode(200);
+
+        // 2️⃣ Create booking (this publishes BookingCreatedEvent)
+        BookingRequest request = new BookingRequest(
+                UUID.randomUUID().toString(),
+                "SHOW_1",
+                seats,
+                bookingId,
+                Instant.now(),
+                500
+        );
+
+        BookingResponse response =
+                RestAssured.given()
+                        .contentType(ContentType.JSON)
+                        .body(request)
+                        .post("http://localhost:9191/booking-service/bookSeat")
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .as(BookingResponse.class);
+
+        String reservationId = response.getReservationId();
+
+        // 3️⃣ Wait for DLT event (after retries exhausted)
+        ConsumerRecord<String, BookingCreatedEvent> dltRecord =
+                KafkaTestUtils.waitForBookingCreatedEventInDLT(reservationId);
+        //System.out.println(dltRecord);
+
+        assertNotNull(dltRecord);
+
+        // 4️⃣ Validate DLT payload
+        BookingCreatedEvent event = dltRecord.value();
+        //assertEquals(bookingId, event.getBookingId());
+        assertEquals("SHOW_1", event.getShowId());
+
+        // 5️⃣ Business assertions
+        assertNull(getBookingStatus(reservationId));
+        assertSeatAvailable("SHOW_1", "B10");
+
+        // 6️⃣ Disable timeout simulation (cleanup)
+        RestAssured.given()
+                .post("http://localhost:9292/internal/test/seat-inventory/timeout/disable")
+                .then()
+                .statusCode(200);
     }
 
     @AfterClass

@@ -1,12 +1,19 @@
 package com.microservices.api.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microservices.api.model.events.BookingCreatedEvent;
+import com.microservices.api.tests.BaseKafkaIntegrationTest;
 import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -142,6 +149,40 @@ public class KafkaTestUtils {
             }
         }
     }
+
+    public static ConsumerRecord<String, BookingCreatedEvent>
+    waitForBookingCreatedEventInDLT(String bookingId) {
+
+        Consumer<String, BookingCreatedEvent> consumer =
+                BaseKafkaIntegrationTest.createConsumer(
+                        "dlt-test-group",
+                        BookingCreatedEvent.class,
+                        "movie-booking-events-dlt"
+                );
+
+        long end = System.currentTimeMillis() + 30_000;
+
+        try {
+            while (System.currentTimeMillis() < end) {
+                ConsumerRecords<String, BookingCreatedEvent> records =
+                        consumer.poll(Duration.ofMillis(1000));
+
+                for (ConsumerRecord<String, BookingCreatedEvent> record : records) {
+                    BookingCreatedEvent event = record.value();
+
+                    if (event != null &&
+                            bookingId.equals(event.getBookingId())) {
+                        return record;
+                    }
+                }
+            }
+        } finally {
+            consumer.close();
+        }
+
+        return null;
+    }
+
 
     public static void publishEvent(String topic, String key, Object event) {
         kafkaTemplate.send(topic, key, event);

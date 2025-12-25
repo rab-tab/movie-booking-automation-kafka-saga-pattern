@@ -34,7 +34,7 @@ public abstract class BaseKafkaIntegrationTest {
         return new KafkaProducer<>(props);
     }
 
-    protected <T> Consumer<String, T> createConsumer(
+    public static <T> Consumer<String, T> createConsumer(
             String groupId,
             Class<T> valueType,
             String topic
@@ -119,5 +119,6 @@ public abstract class BaseKafkaIntegrationTest {
     public static String getBookingStatus(String bookingId) throws SQLException {
         return DBHelper.getBookingStatus(bookingId);
     }
+
 
 }
