@@ -1,16 +1,14 @@
 package com.microservices.api.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservices.api.model.events.BookingCreatedEvent;
-import com.microservices.api.tests.BaseKafkaIntegrationTest;
+import com.microservices.api.tests.base.BaseKafkaIntegrationTest;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 
 import java.time.Duration;
@@ -18,8 +16,6 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import org.apache.kafka.clients.admin.*;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -28,7 +24,6 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.Collections;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 public class KafkaTestUtils {
 
@@ -150,10 +145,33 @@ public class KafkaTestUtils {
         }
     }
 
-    public static ConsumerRecord<String, BookingCreatedEvent>
-    waitForBookingCreatedEventInDLT(String bookingId) {
 
-        Consumer<String, BookingCreatedEvent> consumer =
+    public static BookingCreatedEvent waitForBookingCreatedEventInDLT(String bookingId) throws JsonProcessingException {
+        Consumer<String, String> consumer = BaseKafkaIntegrationTest.createConsumer(
+                "dlt-test-group",
+                String.class,
+                "movie-booking-events-dlt"
+        );
+
+        long end = System.currentTimeMillis() + 30_000;
+        while (System.currentTimeMillis() < end) {
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+
+            for (ConsumerRecord<String, String> record : records) {
+                String json = record.value();
+                BookingCreatedEvent event = new ObjectMapper().readValue(json, BookingCreatedEvent.class);
+
+                if (event != null && bookingId.equals(event.getBookingId())) {
+                    return event;  // ✅ Return the deserialized event
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+       /* Consumer<String, BookingCreatedEvent> consumer =
                 BaseKafkaIntegrationTest.createConsumer(
                         "dlt-test-group",
                         BookingCreatedEvent.class,
@@ -180,8 +198,7 @@ public class KafkaTestUtils {
             consumer.close();
         }
 
-        return null;
-    }
+        return null;*/
 
 
     public static void publishEvent(String topic, String key, Object event) {

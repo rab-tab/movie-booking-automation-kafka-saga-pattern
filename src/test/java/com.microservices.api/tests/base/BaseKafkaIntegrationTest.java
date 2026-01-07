@@ -1,4 +1,4 @@
-package com.microservices.api.tests;
+package com.microservices.api.tests.base;
 
 
 import com.microservices.api.util.DBHelper;
@@ -62,7 +62,7 @@ public abstract class BaseKafkaIntegrationTest {
         return consumer;
     }
 
-    protected <T> T pollSingleRecord(
+    public static <T> T pollSingleRecord(
             Consumer<String, T> consumer,
             String topic,
             Duration timeout

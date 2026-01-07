@@ -3,7 +3,7 @@ package com.microservices.api.tests.failures.idempotency;
 import com.microservices.api.model.events.BookingPaymentEvent;
 import com.microservices.api.model.request.BookingRequest;
 import com.microservices.api.model.response.BookingResponse;
-import com.microservices.api.tests.BaseKafkaIntegrationTest;
+import com.microservices.api.tests.base.BaseKafkaIntegrationTest;
 import com.microservices.api.util.KafkaTestAssertions;
 import com.microservices.api.util.KafkaTestUtils;
 import com.microservices.api.util.TestDataCleaner;

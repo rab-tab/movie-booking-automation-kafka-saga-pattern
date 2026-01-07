@@ -3,7 +3,7 @@ package com.microservices.api.tests.failures.saga;
 import com.microservices.api.model.events.SeatReservedEvent;
 import com.microservices.api.model.request.BookingRequest;
 import com.microservices.api.model.response.BookingResponse;
-import com.microservices.api.tests.BaseKafkaIntegrationTest;
+import com.microservices.api.tests.base.BaseKafkaIntegrationTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.apache.kafka.clients.consumer.Consumer;

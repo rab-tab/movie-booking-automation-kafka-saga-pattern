@@ -1,6 +1,6 @@
 package com.microservices.api.util;
 
-import com.microservices.api.tests.BaseKafkaIntegrationTest;
+import com.microservices.api.tests.base.BaseKafkaIntegrationTest;
 import org.apache.kafka.clients.consumer.Consumer;
 
 import java.time.Duration;
